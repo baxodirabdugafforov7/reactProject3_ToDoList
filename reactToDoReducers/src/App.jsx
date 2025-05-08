@@ -1,23 +1,23 @@
 import React, { useReducer, useEffect } from 'react'
-import FruitHeader from './components/FruitHeader'
-import FruitList from './components/FruitList'
-import EditFruitModal from './components/EditFruitModal'
+import TaskHeader from './components/TaskHeader'
+import TaskList from './components/TaskList'
+import EditTaskModal from './components/EditTaskModal'
 
-const fruitReducer = (state, action) => {
+const taskReducer = (state, action) => {
   switch (action.type) {
-    case 'ADD_FRUIT':
+    case 'ADD_TASK':
       return [{ ...action.payload, id: Date.now() }, ...state]
-    case 'DELETE_FRUIT':
-      return state.filter(fruit => fruit.id !== action.payload)
-    case 'DELETE_ALL_FRUITS':
+    case 'DELETE_TASK':
+      return state.filter(task => task.id !== action.payload)
+    case 'DELETE_ALL_TASKS':
       return []
     case 'TOGGLE_CHECKED':
-      return state.map(fruit =>
-        fruit.id === action.payload ? { ...fruit, isChecked: !fruit.isChecked } : fruit
+      return state.map(task =>
+        task.id === action.payload ? { ...task, isChecked: !task.isChecked } : task
       )
-    case 'EDIT_FRUIT':
-      return state.map(fruit =>
-        fruit.id === action.payload.id ? { ...action.payload } : fruit
+    case 'EDIT_TASK':
+      return state.map(task =>
+        task.id === action.payload.id ? { ...action.payload } : task
       )
     default:
       return state
@@ -25,70 +25,77 @@ const fruitReducer = (state, action) => {
 }
 
 const App = () => {
-  const [fruitList, dispatch] = useReducer(fruitReducer, [], () => {
-    const saved = localStorage.getItem('fruits')
+  const [taskList, dispatch] = useReducer(taskReducer, [], () => {
+    const saved = localStorage.getItem('tasks')
     return saved ? JSON.parse(saved) : []
   })
+
   const [showEditModal, setShowEditModal] = React.useState(false)
-  const [fruitToEdit, setFruitToEdit] = React.useState(null)
+  const [taskToEdit, setTaskToEdit] = React.useState(null)
 
-  const formatPrice = (num) => new Intl.NumberFormat().format(num)
+  const formatDuration = (num) => new Intl.NumberFormat().format(num)
 
-  const addFruit = (name, weight, pricePerKg) => {
+  const addTask = (title, duration, priority) => {
     dispatch({
-      type: 'ADD_FRUIT',
-      payload: { name, weight, pricePerKg, totalPrice: weight * pricePerKg, isChecked: false }
+      type: 'ADD_TASK',
+      payload: {
+        title,
+        duration,
+        priority,
+        score: duration * priority,
+        isChecked: false,
+      }
     })
   }
 
-  const deleteFruit = (id) => {
-    dispatch({ type: 'DELETE_FRUIT', payload: id })
+  const deleteTask = (id) => {
+    dispatch({ type: 'DELETE_TASK', payload: id })
   }
 
-  const deleteAllFruits = () => {
-    dispatch({ type: 'DELETE_ALL_FRUITS' })
+  const deleteAllTasks = () => {
+    dispatch({ type: 'DELETE_ALL_TASKS' })
   }
 
   const toggleChecked = (id) => {
     dispatch({ type: 'TOGGLE_CHECKED', payload: id })
   }
 
-  const editFruit = (fruit) => {
+  const editTask = (task) => {
     setShowEditModal(true)
-    setFruitToEdit(fruit)
+    setTaskToEdit(task)
   }
 
-  const saveFruitEdit = (updatedFruit) => {
-    dispatch({ type: 'EDIT_FRUIT', payload: updatedFruit })
+  const saveTaskEdit = (updatedTask) => {
+    dispatch({ type: 'EDIT_TASK', payload: updatedTask })
     setShowEditModal(false)
   }
 
   useEffect(() => {
-    localStorage.setItem('fruits', JSON.stringify(fruitList))
-  }, [fruitList])
+    localStorage.setItem('tasks', JSON.stringify(taskList))
+  }, [taskList])
 
   return (
     <div className="min-h-screen bg-green-50">
       <div className="max-w-[1200px] mx-auto px-4">
         <header className="bg-green-200 py-6 shadow">
-          <FruitHeader addFruit={addFruit} deleteAllFruits={deleteAllFruits} />
+          <TaskHeader addTask={addTask} deleteAllTasks={deleteAllTasks} />
         </header>
 
         <main className="mt-6">
-          <FruitList
-            fruits={fruitList}
+          <TaskList
+            tasks={taskList}
             toggleChecked={toggleChecked}
-            editFruit={editFruit}
-            deleteFruit={deleteFruit}
-            formatPrice={formatPrice}
+            editTask={editTask}
+            deleteTask={deleteTask}
+            formatDuration={formatDuration}
           />
         </main>
       </div>
 
-      {showEditModal && fruitToEdit && (
-        <EditFruitModal
-          fruit={fruitToEdit}
-          saveEdit={saveFruitEdit}
+      {showEditModal && taskToEdit && (
+        <EditTaskModal
+          task={taskToEdit}
+          saveEdit={saveTaskEdit}
           closeModal={() => setShowEditModal(false)}
         />
       )}

@@ -1,92 +1,86 @@
 import React, { useState, useEffect } from 'react'
-import FruitHeader from './components/FruitHeader'
-import FruitList from './components/FruitList'
-import EditFruitModal from './components/EditFruitModal'
+import TaskHeader from './components/TaskHeader'
+import TaskList from './components/TaskList'
+import EditTaskModal from './components/EditTaskModal'
 
 const App = () => {
-  const getSavedFruits = () => {
-    const saved = localStorage.getItem('fruits')
+  const getSavedTasks = () => {
+    const saved = localStorage.getItem('tasks')
     return saved ? JSON.parse(saved) : []
   }
 
-  const [fruitList, setFruitList] = useState(getSavedFruits())
+  const [taskList, setTaskList] = useState(getSavedTasks())
   const [showEditModal, setShowEditModal] = useState(false)
-  const [fruitToEdit, setFruitToEdit] = useState(null)
+  const [taskToEdit, setTaskToEdit] = useState(null)
 
-  const formatPrice = (num) => new Intl.NumberFormat().format(num)
+  const formatValue = (num) => new Intl.NumberFormat().format(num)
 
-
-  const addFruit = (name, weight, pricePerKg) => {
-    const newFruit = {
+  const addTask = (title, duration, priority) => {
+    const newTask = {
       id: Date.now(),
-      name,
-      weight,
-      pricePerKg,
-      totalPrice: parseFloat(weight) * parseFloat(pricePerKg),
+      title,
+      duration,
+      priority,
+      score: parseFloat(duration) * parseFloat(priority),
       isChecked: false,
     }
-    setFruitList([newFruit, ...fruitList])
+    setTaskList([newTask, ...taskList])
   }
 
-
-  const removeFruit = (id) => {
-    setFruitList(fruitList.filter(fruit => fruit.id !== id))
+  const removeTask = (id) => {
+    setTaskList(taskList.filter(task => task.id !== id))
   }
 
-
-  const removeAllFruits = () => {
-    setFruitList([])
+  const removeAllTasks = () => {
+    setTaskList([])
   }
 
-
-  const toggleFruitChecked = (id) => {
-    setFruitList(fruitList.map(fruit =>
-      fruit.id === id ? { ...fruit, isChecked: !fruit.isChecked } : fruit
+  const toggleTaskChecked = (id) => {
+    setTaskList(taskList.map(task =>
+      task.id === id ? { ...task, isChecked: !task.isChecked } : task
     ))
   }
 
-
-  const editFruit = (fruit) => {
+  const editTask = (task) => {
     setShowEditModal(true)
-    setFruitToEdit(fruit)
+    setTaskToEdit(task)
   }
 
+  const saveTaskEdit = (updatedTask) => {
+    updatedTask.score = parseFloat(updatedTask.duration) * parseFloat(updatedTask.priority)
 
-  const saveFruitEdit = (updatedFruit) => {
-    updatedFruit.totalPrice = parseFloat(updatedFruit.weight) * parseFloat(updatedFruit.pricePerKg)
-
-    setFruitList(fruitList.map(fruit =>
-      fruit.id === updatedFruit.id ? updatedFruit : fruit
+    setTaskList(taskList.map(task =>
+      task.id === updatedTask.id ? updatedTask : task
     ))
     setShowEditModal(false)
   }
 
   useEffect(() => {
-    localStorage.setItem('fruits', JSON.stringify(fruitList))
-  }, [fruitList])
+    localStorage.setItem('tasks', JSON.stringify(taskList))
+  }, [taskList])
 
   return (
     <div className="min-h-screen bg-green-50">
       <div className="max-w-[1200px] mx-auto px-4">
         <header className="bg-green-200 py-6 shadow">
-          <FruitHeader onAddFruit={addFruit} onDeleteAll={removeAllFruits} />
+          <TaskHeader onAddTask={addTask} onDeleteAll={removeAllTasks} />
         </header>
 
         <main className="mt-6">
-          <FruitList
-            fruits={fruitList}
-            onToggleChecked={toggleFruitChecked}
-            onEdit={editFruit}
-            onDelete={removeFruit}
-            formatPrice={formatPrice}
+          <TaskList
+            tasks={taskList}
+            onToggleChecked={toggleTaskChecked}
+            onEdit={editTask}
+            onDelete={removeTask}
+            formatValue={formatValue}
           />
         </main>
       </div>
 
-      {showEditModal && fruitToEdit && (
-        <EditFruitModal
-          fruit={fruitToEdit}
-          onSave={saveFruitEdit}
+      {showEditModal && taskToEdit && (
+        <EditTaskModal
+          task={taskToEdit}
+          onSave={saveTaskEdit}
           onClose={() => setShowEditModal(false)}
         />
       )}

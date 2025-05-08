@@ -1,49 +1,48 @@
 import React, { useState } from 'react'
 
-const FruitHeader = ({ onAddFruit, onDeleteAll }) => {
-  const [fruitName, setFruitName] = useState('')
-  const [weight, setWeight] = useState('')
-  const [pricePerKg, setPricePerKg] = useState('')
+const TaskHeader = ({ onAddTask, onDeleteAll }) => {
+  const [title, setTitle] = useState('')
+  const [duration, setDuration] = useState('')
+  const [priority, setPriority] = useState('')
 
-  const handleAddFruit = () => {
-    if (fruitName && weight && pricePerKg) {
-      onAddFruit(fruitName, weight, pricePerKg)
-      setFruitName('')
-      setWeight('')
-      setPricePerKg('')
+  const handleAddTask = () => {
+    if (title && duration && priority) {
+      onAddTask(title, duration, priority)
+      setTitle('')
+      setDuration('')
+      setPriority('')
     }
   }
 
   return (
     <div className="flex justify-between items-center bg-gray-200 p-4 rounded-t-lg">
-
       <div className="flex flex-grow justify-around items-center">
         <input
           type="text"
-          value={fruitName}
-          onChange={(e) => setFruitName(e.target.value)}
-          placeholder="Fruit Name"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          placeholder="Task Title"
           className="p-2 border border-gray-300 rounded"
         />
         <input
           type="number"
-          value={weight}
-          onChange={(e) => setWeight(e.target.value)}
-          placeholder="Weight (kg)"
+          value={duration}
+          onChange={(e) => setDuration(e.target.value)}
+          placeholder="Duration (hrs)"
           className="p-2 border border-gray-300 rounded"
         />
         <input
           type="number"
-          value={pricePerKg}
-          onChange={(e) => setPricePerKg(e.target.value)}
-          placeholder="Price per kg (UZS)"
+          value={priority}
+          onChange={(e) => setPriority(e.target.value)}
+          placeholder="Priority (1–5)"
           className="p-2 border border-gray-300 rounded"
         />
       </div>
 
       <div className="flex flex-col gap-2">
         <button
-          onClick={handleAddFruit}
+          onClick={handleAddTask}
           className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 w-40"
         >
           Add <i className="fa-solid fa-square-plus mx-1 text-1.4xl"></i>
@@ -59,4 +58,4 @@ const FruitHeader = ({ onAddFruit, onDeleteAll }) => {
   )
 }
 
-export default FruitHeader
+export default TaskHeader

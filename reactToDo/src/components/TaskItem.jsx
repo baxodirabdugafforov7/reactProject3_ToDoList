@@ -1,30 +1,30 @@
 import React from 'react'
 
-const FruitItem = ({ fruit, onToggleChecked, onEdit, onDelete, formatPrice }) => {
+const TaskItem = ({ task, onToggleChecked, onEdit, onDelete, formatValue }) => {
   return (
     <div className="flex justify-around items-center bg-white shadow p-4 rounded text-lg mb-4">
       <input
         type="checkbox"
-        checked={fruit.isChecked}
-        onChange={() => onToggleChecked(fruit.id)}
+        checked={task.isChecked}
+        onChange={() => onToggleChecked(task.id)}
         className="w-5 h-5"
       />
-      <span className={`${fruit.isChecked ? 'line-through text-gray-500' : ''} w-1/4`}>
-        {fruit.name}
+      <span className={`${task.isChecked ? 'line-through text-gray-500' : ''} w-1/4`}>
+        {task.title}
       </span>
-      <span className="w-1/6">{formatPrice(fruit.weight)} kg</span>
-      <span className="w-1/6">UZS {formatPrice(fruit.pricePerKg)}</span>
-      <span className="w-1/6 font-semibold">UZS {formatPrice(fruit.totalPrice.toFixed(2))}</span>
-      {!fruit.isChecked && (
+      <span className="w-1/6">{formatValue(task.duration)} hrs</span>
+      <span className="w-1/6">Priority: {formatValue(task.priority)}</span>
+      <span className="w-1/6 font-semibold">Score: {formatValue(task.score.toFixed(2))}</span>
+      {!task.isChecked && (
         <div className="flex gap-2">
           <button
-            onClick={() => onEdit(fruit)}
+            onClick={() => onEdit(task)}
             className="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600"
           >
             Edit <i className="fa-solid fa-pen-to-square mx-1 text-1.4xl"></i>
           </button>
           <button
-            onClick={() => onDelete(fruit.id)}
+            onClick={() => onDelete(task.id)}
             className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
           >
             Delete <i className="fa-solid fa-xmark mx-1 text-1.4xl"></i>
@@ -35,4 +35,4 @@ const FruitItem = ({ fruit, onToggleChecked, onEdit, onDelete, formatPrice }) =>
   )
 }
 
-export default FruitItem
+export default TaskItem
